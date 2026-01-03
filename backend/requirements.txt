@@ -1,0 +1,21 @@
+# Web Framework & Server
+fastapi==0.128.0
+uvicorn==0.34.0
+python-multipart==0.0.20
+
+# AI Framework (Pinned to resolve conflicts instantly)
+
+
+langchain>=1.1.3
+langchain-openai>=1.1.1
+langgraph>=1.0.3
+langchain-community>=0.4.1
+
+# Environment & Utilities
+python-dotenv==1.0.1
+pydantic-settings==2.12.0
+requests==2.32.5
+
+# Parsing & Data Extraction
+beautifulsoup4==4.12.3
+pypdf==6.5.0

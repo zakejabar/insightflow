@@ -8,10 +8,11 @@ load_dotenv()
 
 # OpenRouter setup
 llm = ChatOpenAI(
-    model="meta-llama/llama-3.1-70b-instruct",  # or "meta-llama/llama-3.1-70b-instruct"
-    openai_api_key=os.getenv("OPENROUTER_API_KEY"),
-    openai_api_base="https://openrouter.ai/api/v1",
-    temperature=0.7
+    model="moonshotai/kimi-k2-instruct-0905",  # or "meta-llama/llama-3.1-70b-instruct"
+    openai_api_key=os.getenv("GROQ_API_KEY"),
+    openai_api_base="https://api.groq.com/openai/v1",
+    temperature=0.7,
+    max_tokens=4000
 )
 
 class AgentState(TypedDict):

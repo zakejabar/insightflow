@@ -110,3 +110,10 @@ async def run_research_agent(job_id: str, query: str):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+# Add this near the top with other functions
+def update_progress(job_id: str, message: str):
+    """Update job progress message"""
+    if job_id in research_jobs:
+        research_jobs[job_id]["progress"] = message
+        print(f"📊 Progress update [{job_id[:8]}...]: {message}")       

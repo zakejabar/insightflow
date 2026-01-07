@@ -86,26 +86,62 @@ async def health():
     }
 
 async def run_research_agent(job_id: str, query: str):
-    """Run the LangGraph agent"""
     try:
-        # Import agent here to avoid circular imports
         from agent import run_agent
         
-        # Update progress
-        research_jobs[job_id]["progress"] = "Planning research..."
+        # We'll monkey-patch the agent to report progress
+        # Import the original functions
+        from agent import plan_research, gather_information, analyze_information, generate_report
         
-        # Run the agent
+        # Wrap each function to update progress
+        original_plan = plan_research
+        original_gather = gather_information
+        original_analyze = analyze_information
+        original_report = generate_report
+        
+        def plan_with_progress(state):
+            research_jobs[job_id]["progress"] = "Planning research strategy..."
+            return original_plan(state)
+        
+        def gather_with_progress(state):
+            research_jobs[job_id]["progress"] = "Searching the web for sources..."
+            return original_gather(state)
+        
+        def analyze_with_progress(state):
+            research_jobs[job_id]["progress"] = "Analyzing information and extracting insights..."
+            return original_analyze(state)
+        
+        def report_with_progress(state):
+            research_jobs[job_id]["progress"] = "Generating comprehensive report..."
+            return original_report(state)
+        
+        # Monkey-patch (temporary override)
+        import agent
+        agent.plan_research = plan_with_progress
+        agent.gather_information = gather_with_progress
+        agent.analyze_information = analyze_with_progress
+        agent.generate_report = report_with_progress
+        
+        # Run agent
         result = await run_agent(query)
         
-        # Update with result
+        # Restore original functions
+        agent.plan_research = original_plan
+        agent.gather_information = original_gather
+        agent.analyze_information = original_analyze
+        agent.generate_report = original_report
+        
+        # Mark complete
         research_jobs[job_id]["status"] = "completed"
         research_jobs[job_id]["result"] = result
         research_jobs[job_id]["progress"] = "Complete!"
         
+        print(f"✅ Job {job_id[:8]}... completed successfully")
+        
     except Exception as e:
         research_jobs[job_id]["status"] = "error"
         research_jobs[job_id]["error"] = str(e)
-        print(f"Error in research agent: {e}")
+        print(f"❌ Job {job_id[:8]}... failed: {e}")
 
 if __name__ == "__main__":
     import uvicorn

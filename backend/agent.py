@@ -148,9 +148,10 @@ Extract 5-7 key findings that directly answer the query. Each finding should:
 1. Be specific (include numbers, dates, facts)
 2. Cite the source (mention the title)
 3. Be relevant to the original query
+4. Give the source link
 
 Format as a Python list of strings:
-["Finding 1 (Source: Title)", "Finding 2 (Source: Title)", ...]
+["Finding 1 (Source: Title. Source: (the link))", "Finding 2 (Source: Title. Source: (the link))", ...]
 
 Focus on the MOST important and relevant information."""
 

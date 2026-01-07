@@ -40,7 +40,7 @@ export default function ProgressTracker({ currentStep, progress }: ProgressTrack
     const stepText = currentStep.toLowerCase()
     if (stepText.includes('plan')) return 0
     if (stepText.includes('gather') || stepText.includes('search')) return 1
-    if (stepText.includes('analyz')) return 2
+    if (stepText.includes('analyze')) return 2
     if (stepText.includes('report') || stepText.includes('generat')) return 3
     return 0
   }

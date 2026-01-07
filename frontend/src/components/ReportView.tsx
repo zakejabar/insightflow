@@ -87,20 +87,50 @@ export default function ReportView({ report, sources, insights, query }: ReportV
       {/* Sources (if available) */}
       {sources && sources.length > 0 && (
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Sources ({sources.length})</h3>
-          <div className="space-y-3">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">
+            Sources ({sources.length})
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {sources.map((source, i) => (
-              <div key={i} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                <div className="font-semibold text-gray-800">{source.title}</div>
-                
-                  href={source.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                <a>
-                  {source.url}
-                </a>
-              </div>
+              <a
+                key={i}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition"
+              >
+                <div className="flex items-start gap-3">
+                  {/* Number */}
+                  <div className="shrink-0 w-6 h-6 bg-gray-300 group-hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold transition">
+                    {i + 1}
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-gray-800 group-hover:text-blue-600 transition line-clamp-2 text-sm">
+                      {source.title}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1 truncate">
+                      {new URL(source.url).hostname}
+                    </div>
+                  </div>
+                  
+                  {/* Arrow Icon */}
+                  <svg 
+                    className="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition shrink-0" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      strokeWidth={2} 
+                      d="M9 5l7 7-7 7" 
+                    />
+                  </svg>
+                </div>
+              </a>
             ))}
           </div>
         </div>

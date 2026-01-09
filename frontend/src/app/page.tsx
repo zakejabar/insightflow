@@ -1,4 +1,5 @@
 import QueryInput from '@/components/QueryInput'
+import Image from 'next/image'
 
 export default function Home() {
   return (
@@ -17,8 +18,8 @@ export default function Home() {
           
           <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-4">
             AI Research Agent that delivers comprehensive reports in{' '}
-            <span className="font-bold text-blue-600">10 minutes</span> instead of{' '}
-            <span className="line-through text-gray-400">6 hours</span>
+            <span className="font-bold text-blue-600">Minutes</span> instead of{' '}
+            <span className="line-through text-gray-400">Hours</span>
           </p>
 
           <div className="flex items-center justify-center gap-6 text-sm text-gray-600 mt-6">
@@ -37,18 +38,35 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Result Example Sectiion */}
+          {/* <div className="mb-12">
+            <div className="bg-white rounded-2xl shadow-2xl p-2 border border-gray-200">
+              <div className="bg-linear-to-br from-blue-100 to-indigo-100 rounded-xl aspect-video flex items-center justify-center">
+                <div className="text-center">
+                  <Image 
+                    src="/Insighflow_result1.png" // Path starts from the public folder
+                    alt="Research Results Example"
+                    width={1200} // Set a base width
+                    height={675}  // Set a base height (maintains aspect-video)
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </div> */}
+
         {/* Query Input */}
         <QueryInput />
 
         {/* Stats */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <div className="bg-white/50 backdrop-blur rounded-xl p-6 text-center border border-gray-200">
-            <div className="text-3xl font-bold text-blue-600 mb-2">~10 min</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">Under 1 min</div>
             <div className="text-sm text-gray-600">Average research time</div>
           </div>
           <div className="bg-white/50 backdrop-blur rounded-xl p-6 text-center border border-gray-200">
-            <div className="text-3xl font-bold text-indigo-600 mb-2">$0.50-1</div>
-            <div className="text-sm text-gray-600">Cost per report</div>
+            <div className="text-3xl font-bold text-indigo-600 mb-2">1,854</div>
+            <div className="text-sm text-gray-600">Median token</div>
           </div>
           <div className="bg-white/50 backdrop-blur rounded-xl p-6 text-center border border-gray-200">
             <div className="text-3xl font-bold text-purple-600 mb-2">4 Agents</div>

@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 InsightFlow
 
-## Getting Started
+**AI research agent that delivers comprehensive reports in 10 minutes instead of 6 hours.**
 
-First, run the development server:
+Built with LangGraph multi-agent system, Next.js, and real-time web search.
 
+
+## 🎯 What It Does
+
+InsightFlow automates research by:
+1. **Breaking down** complex queries into searchable sub-questions
+2. **Searching** the web for relevant sources
+3. **Analyzing** information and extracting key insights
+4. **Generating** comprehensive reports with citations
+
+## 🚀 Live Demo
+
+Try it: [Your deployed link or localhost instructions]
+
+## ⚡ Quick Start
+
+### Prerequisites
+- Node.js 18+
+- Python 3.11+
+- OpenRouter API key (or Groq)
+- Tavily API key
+
+### Installation
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone repo
+git clone https://github.com/yourusername/insightflow
+cd insightflow
+
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+# Add your API keys to .env
+
+# Frontend setup
+cd ../frontend
+npm install
+
+# Run both
+# Terminal 1:
+cd backend && python main.py
+
+# Terminal 2:
+cd frontend && npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏗️ Architecture
+```
+┌─────────────┐
+│  Next.js UI │ ← User submits query
+└──────┬──────┘
+       │ HTTP POST
+       ▼
+┌─────────────┐
+│  FastAPI    │ ← Returns job_id immediately
+└──────┬──────┘
+       │ Async
+       ▼
+┌─────────────────────────────────┐
+│  LangGraph Multi-Agent System   │
+├─────────────────────────────────┤
+│ 1. Planner   → Sub-questions    │
+│ 2. Gatherer  → Web search       │
+│ 3. Analyzer  → Extract insights │
+│ 4. Reporter  → Generate report  │
+└─────────────────────────────────┘
+       │
+       ▼ Poll every 2s
+┌─────────────┐
+│  Show       │
+│  Progress   │
+└─────────────┘
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Tech Stack
 
-## Learn More
+**Frontend:**
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- React Markdown
 
-To learn more about Next.js, take a look at the following resources:
+**Backend:**
+- Python 3.11
+- FastAPI
+- LangGraph (multi-agent orchestration)
+- OpenRouter API (LLM)
+- Tavily API (web search)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📊 Performance
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Speed**: 10-15 seconds average
+- **Cost**: ~$0.02-0.05 per research
+- **Accuracy**: Cites sources for all claims
 
-## Deploy on Vercel
+## 🎓 Why I Built This
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+I needed to do market research for a project and spent 6 hours manually reading articles and taking notes. I thought: "AI should do this."
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+So I built InsightFlow in 3 days using LangGraph to orchestrate multiple specialized agents. Each agent has one job: planning, searching, analyzing, or reporting.
+
+## 🚧 Roadmap
+
+- [ ] PDF upload support
+- [ ] Save research history
+- [ ] Custom agent workflows
+- [ ] Multi-language support
+- [ ] API for developers
+
+## 📝 License
+
+MIT
+
+## 👤 Author
+
+**Your Name**
+- LinkedIn: https://www.linkedin.com/in/zahir-jabar-7b7944281/
+- Portfolio: https://github.com/zakejabar
+
+---
+
+⭐ Star this repo if it helped you!

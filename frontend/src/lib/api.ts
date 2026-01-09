@@ -17,6 +17,7 @@ export interface StatusResponse {
       url: string;
       content: string;
     }>;
+    current_step?: string;
     insights: string[];
   };
   error?: string;

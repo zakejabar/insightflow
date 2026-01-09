@@ -211,49 +211,52 @@ def generate_report(state: AgentState) -> AgentState:
     ])
     
     prompt = f"""You are writing a comprehensive research report.
-
-Original Query: "{state['query']}"
-
-Key Findings:
-{findings_text}
-
-Sources:
-{sources_list}
-
-Create a well-structured research report with these sections:
-
-# Executive Summary
-[2-3 sentence overview of main findings]
-
-# Key Findings
-[Detailed explanation of each key finding with specific data]
-
-# Analysis
-[Deeper analysis, patterns, implications]
-
-# Conclusion
-[Summary and main takeaways]
-
-# Sources
-[List all sources used]
-
-Guidelines:
-- Be specific (include numbers, percentages, dates)
-- Cite sources naturally in text
-- Write in clear, professional language
-- Focus on answering the original query
-- Keep total length around 500-800 words
-
-Write the report now:"""
+        Original Query: "{state['query']}"
+        Key Findings:
+        {findings_text}
+        Sources:
+        {sources_list}
+        Create a well-structured research report with these sections:
+        # Executive Summary
+        [2-3 sentence overview of main findings]
+        # Key Findings
+        [Detailed explanation of each key finding with specific data]
+        # Analysis
+        [Deeper analysis, patterns, implications]
+        # Conclusion
+        [Summary and main takeaways]
+        # Sources
+        [List all sources used]
+        Guidelines:
+        - Be specific (include numbers, percentages, dates)
+        - Cite sources naturally in text
+        - Write in clear, professional language
+        - Focus on answering the original query
+        - Keep total length around 500-800 words
+        - Use Markdown formatting (# for headings, ** for bold, - for lists, etc.)
+        - DO NOT wrap the entire report in a code block (no ``` at the beginning or end)
+        Write ONLY the report content, starting directly with # Executive Summary:"""
 
     response = llm.invoke(prompt)
-    report = response.content
+    raw_report = response.content.strip()
     
-    print(f"✓ Report generated ({len(report)} characters)")
+    # Extra safety: strip any outer code blocks if the model ignores instructions
+    if raw_report.startswith('```'):
+        lines = raw_report.split('\n')
+        # Skip the opening ```
+        lines = lines[1:]
+        # Remove closing ``` if present
+        if lines and lines[-1].strip() == '```':
+            lines = lines[:-1]
+        # If it specified ```markdown or ```python, skip that line too
+        if lines and lines[0].strip().startswith('markdown') or lines[0].strip().startswith('python'):
+            lines = lines[1:]
+        raw_report = '\n'.join(lines).strip()
     
+    print(f"✓ Report generated ({len(raw_report)} characters)")
     return {
         **state,
-        "report": report,
+        "report": raw_report,
         "current_step": "Report complete"
     }
 

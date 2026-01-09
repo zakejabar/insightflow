@@ -35,14 +35,25 @@ const steps: Step[] = [
 ]
 
 export default function ProgressTracker({ currentStep, progress }: ProgressTrackerProps) {
-  // Determine current step index
+  // Match EXACT step names from backend
   const getCurrentStepIndex = () => {
-    const stepText = currentStep.toLowerCase()
-    if (stepText.includes('plan')) return 0
-    if (stepText.includes('gather') || stepText.includes('search')) return 1
-    if (stepText.includes('analyze')) return 2
-    if (stepText.includes('report') || stepText.includes('generat')) return 3
-    return 0
+    // Normalize the step name
+    const step = (currentStep || '').toLowerCase().trim()
+    
+    // Match exact backend step names
+    if (step === 'planning') return 0
+    if (step === 'gathering') return 1
+    if (step === 'analyzing') return 2
+    if (step === 'reporting') return 3
+    if (step === 'complete') return 4
+    
+    // Fallback: try to match keywords (only if exact match fails)
+    if (step.includes('plan')) return 0
+    if (step.includes('gather') || step.includes('search')) return 1
+    if (step.includes('analyze')) return 2
+    if (step.includes('report') || step.includes('generat')) return 3
+    
+    return 0  // Default to first step
   }
 
   const currentIndex = getCurrentStepIndex()

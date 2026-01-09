@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'  // ← ADD THIS
 
 interface ReportViewProps {
   report: string
@@ -74,17 +75,44 @@ export default function ReportView({ report, sources, insights, query }: ReportV
         </button>
       </div>
 
-      {/* Main Report */}
+      {/* Main Report - UPDATED */}
       <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
         <h3 className="text-xl font-bold text-gray-800 mb-4">Research Report</h3>
-        <div className="prose prose-sm md:prose-base max-w-none">
-          <pre className="whitespace-pre-wrap font-sans text-gray-700 leading-relaxed">
+        
+        {/* REPLACE <pre> WITH MARKDOWN RENDERER */}
+        <div className="prose prose-slate max-w-none">
+          <ReactMarkdown
+            components={{
+              // Customize heading styles
+              h1: ({node, ...props}) => <h1 className="text-3xl font-bold mb-4 text-gray-900" {...props} />,
+              h2: ({node, ...props}) => <h2 className="text-2xl font-bold mb-3 mt-6 text-gray-800" {...props} />,
+              h3: ({node, ...props}) => <h3 className="text-xl font-semibold mb-2 mt-4 text-gray-800" {...props} />,
+              
+              // Customize paragraph
+              p: ({node, ...props}) => <p className="mb-4 text-gray-700 leading-relaxed" {...props} />,
+              
+              // Customize lists
+              ul: ({node, ...props}) => <ul className="list-disc list-inside mb-4 space-y-2" {...props} />,
+              ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-4 space-y-2" {...props} />,
+              li: ({node, ...props}) => <li className="text-gray-700" {...props} />,
+              
+              // Customize links
+              a: ({node, ...props}) => <a className="text-blue-600 hover:text-blue-800 underline" {...props} />,
+              
+              // Customize bold/italic
+              strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
+              em: ({node, ...props}) => <em className="italic" {...props} />,
+              
+              // Customize code
+              code: ({node, ...props}) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800" {...props} />,
+            }}
+          >
             {report}
-          </pre>
+          </ReactMarkdown>
         </div>
       </div>
 
-      {/* Sources (if available) */}
+      {/* Sources */}
       {sources && sources.length > 0 && (
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
           <h3 className="text-xl font-bold text-gray-800 mb-4">
@@ -100,12 +128,10 @@ export default function ReportView({ report, sources, insights, query }: ReportV
                 className="group p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition"
               >
                 <div className="flex items-start gap-3">
-                  {/* Number */}
                   <div className="shrink-0 w-6 h-6 bg-gray-300 group-hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold transition">
                     {i + 1}
                   </div>
                   
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-800 group-hover:text-blue-600 transition line-clamp-2 text-sm">
                       {source.title}
@@ -115,7 +141,6 @@ export default function ReportView({ report, sources, insights, query }: ReportV
                     </div>
                   </div>
                   
-                  {/* Arrow Icon */}
                   <svg 
                     className="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition shrink-0" 
                     fill="none" 
@@ -136,12 +161,12 @@ export default function ReportView({ report, sources, insights, query }: ReportV
         </div>
       )}
 
-      {/* New Research Button */}
+      {/* New Research Button - FIXED */}
       <div className="text-center">
-        
+        <a
           href="/"
           className="inline-block bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-8 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-lg"
-        <a>
+        >
           Start New Research →
         </a>
       </div>

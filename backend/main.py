@@ -32,6 +32,7 @@ class StatusResponse(BaseModel):
     progress: Optional[str] = None
     result: Optional[dict] = None
     error: Optional[str] = None
+    current_step: Optional[str] = None
 
 @app.post("/api/research")
 async def create_research(request: ResearchRequest):
@@ -42,6 +43,7 @@ async def create_research(request: ResearchRequest):
         "status": "processing",
         "query": request.query,
         "progress": "Initializing agent...",
+        "current_step": "Planning",
         "result": None,
         "error": None
     }
@@ -100,20 +102,37 @@ async def run_research_agent(job_id: str, query: str):
         original_report = generate_report
         
         def plan_with_progress(state):
-            research_jobs[job_id]["progress"] = "Planning research strategy..."
-            return original_plan(state)
-        
+            research_jobs[job_id]["current_step"] = "Planning"
+            research_jobs[job_id]["current_step_index"] = 0  # ← ADD THIS
+            research_jobs[job_id]["progress"] = "Breaking down your query..."
+            result = original_plan(state)
+            research_jobs[job_id]["progress"] = f"Created {len(result['research_plan'])} research questions"
+            return result
+
         def gather_with_progress(state):
-            research_jobs[job_id]["progress"] = "Searching the web for sources..."
-            return original_gather(state)
-        
+            research_jobs[job_id]["current_step"] = "Gathering"
+            research_jobs[job_id]["current_step_index"] = 1  # ← ADD THIS
+            research_jobs[job_id]["progress"] = "Searching the web..."
+            result = original_gather(state)
+            total = sum(len(r) for r in result['search_results'].values())
+            research_jobs[job_id]["progress"] = f"Found {total} sources"
+            return result
+
         def analyze_with_progress(state):
-            research_jobs[job_id]["progress"] = "Analyzing information and extracting insights..."
-            return original_analyze(state)
-        
+            research_jobs[job_id]["current_step"] = "Analyzing"
+            research_jobs[job_id]["current_step_index"] = 2  # ← ADD THIS
+            research_jobs[job_id]["progress"] = "Extracting key insights..."
+            result = original_analyze(state)
+            research_jobs[job_id]["progress"] = f"Extracted {len(result['key_findings'])} findings"
+            return result
+
         def report_with_progress(state):
-            research_jobs[job_id]["progress"] = "Generating comprehensive report..."
-            return original_report(state)
+            research_jobs[job_id]["current_step"] = "Reporting"
+            research_jobs[job_id]["current_step_index"] = 3  # ← ADD THIS
+            research_jobs[job_id]["progress"] = "Generating report..."
+            result = original_report(state)
+            research_jobs[job_id]["progress"] = "Report complete!"
+            return result
         
         # Monkey-patch (temporary override)
         import agent
@@ -135,12 +154,14 @@ async def run_research_agent(job_id: str, query: str):
         research_jobs[job_id]["status"] = "completed"
         research_jobs[job_id]["result"] = result
         research_jobs[job_id]["progress"] = "Complete!"
+        research_jobs[job_id]["current_step"] = "Complete"
         
         print(f"✅ Job {job_id[:8]}... completed successfully")
         
     except Exception as e:
         research_jobs[job_id]["status"] = "error"
         research_jobs[job_id]["error"] = str(e)
+        research_jobs[job_id]["current_step"] = "Error"
         print(f"❌ Job {job_id[:8]}... failed: {e}")
 
 if __name__ == "__main__":

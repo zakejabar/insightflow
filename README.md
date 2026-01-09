@@ -1,6 +1,6 @@
 # 🧠 InsightFlow
 
-**AI research agent that delivers comprehensive reports in 10 minutes instead of 6 hours.**
+**AI research agent that delivers comprehensive reports in Minutes instead of Hours.**
 
 Built with LangGraph multi-agent system, Next.js, and real-time web search.
 
@@ -13,9 +13,6 @@ InsightFlow automates research by:
 3. **Analyzing** information and extracting key insights
 4. **Generating** comprehensive reports with citations
 
-## 🚀 Live Demo
-
-Try it: [Your deployed link or localhost instructions]
 
 ## ⚡ Quick Start
 

@@ -1,128 +1,107 @@
-# 🧠 InsightFlow
+# 🧠 InsightFlow V2: Advanced Agentic Research Engine
 
-**AI research agent that delivers comprehensive reports in Minutes instead of Hours.**
+> **"I don't build chatbots. I build digital employees."**
 
-Built with LangGraph multi-agent system, Next.js, and real-time web search.
+InsightFlow is a **Production-Grade Cognitive Agent** designed for deep, autonomous research. Unlike linear RAG systems, it uses a **Cyclic State Machine (LangGraph)** to plan, research, critique its own findings, and self-correct—mimicking a senior human researcher.
 
+![UI Preview](https://via.placeholder.com/800x400?text=InsightFlow+Transparent+Cortex+UI)
 
-## 🎯 What It Does
+## 🚀 The "Agentic" Difference
 
-InsightFlow automates research by:
-1. **Breaking down** complex queries into searchable sub-questions
-2. **Searching** the web for relevant sources
-3. **Analyzing** information and extracting key insights
-4. **Generating** comprehensive reports with citations
+Most AI wrappers are linear (`Input -> Search -> Answer`). InsightFlow is **Cyclic**.
 
+### 1. 🧠 Cognitive Architecture (The Loop)
+The agent doesn't just fetch data; it **thinks**.
+- **Planner**: Breaks vague queries ("Future of AI") into specific executable strategies.
+- **Gatherer**: Context-aware routing.
+    - *Web Mode*: Uses **Tavily** + **Deep Scraping** for market research.
+    - *Academic Mode*: Uses **Semantic Scholar** to filter for peer-reviewed papers (impact factor > 50).
+- **Analyst (Reflexion)**: Reads the data and asks: *"Is this enough?"*
+    - If **No**: It loops back (`Loop Count < 3`) with new, refined queries.
+    - If **Yes**: It proceeds to the Writer.
+
+### 2. 🛡️ Enterprise Reliability
+Built to prove that AI can be trusted in high-stakes environments (e.g., Accounting, Law).
+- **Anti-Hallucination**: Strict prompt engineering forbids inventing citations. "No data" is a valid answer.
+- **Type Safety**: Replaced dangerous `eval()` with **Pydantic** models. Outputs are guaranteed valid JSON.
+- **Resilience**: Implemented **Exponential Backoff** for API rate limits (handles 429 errors gracefully).
+
+### 3. 👁️ Transparent Cortex UI (New in V2)
+We don't hide the AI's logic. We visualize it.
+- **Neural Stream**: A real-time terminal showing the agent's internal monologue ("🤖 Planner: Analyzing...", "🌍 Network: GET 200 OK").
+- **Live State Pulse**: Visual indicators show exactly which specialized agent is active.
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    User[User Request] --> Planner
+    Planner --> Router{Mode?}
+    Router -- Web --> Tavily[Web Search]
+    Router -- Academic --> Scholar[Semantic Scholar]
+    Tavily --> Scraper[Deep Scraper]
+    Scholar --> Analyst
+    Scraper --> Analyst
+    Analyst --> Decision{Enough Info?}
+    Decision -- No (Loop < 3) --> Planner
+    Decision -- Yes --> Writer
+    Writer --> Report
+```
+
+## 🛠️ Tech Stack
+
+- **Orchestration**: LangGraph (Cyclic State Management)
+- **Backend**: FastAPI (Python 3.11), Pydantic
+- **Frontend**: Next.js 14, TailwindCSS, Glassmorphism UI
+- **Search**: Tavily API (Web), Semantic Scholar API (Academic)
+- **Model**: OpenRouter / Groq (Llama 3 / GPT-4)
+
+---
 
 ## ⚡ Quick Start
 
 ### Prerequisites
 - Node.js 18+
 - Python 3.11+
-- OpenRouter API key (or Groq)
-- Tavily API key
+- API Keys: OpenRouter, Tavily
 
 ### Installation
+
 ```bash
-# Clone repo
-git clone https://github.com/yourusername/insightflow
+# 1. Clone
+git clone https://github.com/zakejabar/insightflow.git
 cd insightflow
 
-# Backend setup
+# 2. Backend Setup
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
-# Add your API keys to .env
+cp .env.example .env  # Add your API Keys!
 
-# Frontend setup
+# 3. Frontend Setup
 cd ../frontend
 npm install
 
-# Run both
-# Terminal 1:
+# 4. Run System
+# Terminal A (Backend)
 cd backend && python main.py
 
-# Terminal 2:
+# Terminal B (Frontend)
 cd frontend && npm run dev
 ```
 
-Visit http://localhost:3000
-
-## 🏗️ Architecture
-```
-┌─────────────┐
-│  Next.js UI │ ← User submits query
-└──────┬──────┘
-       │ HTTP POST
-       ▼
-┌─────────────┐
-│  FastAPI    │ ← Returns job_id immediately
-└──────┬──────┘
-       │ Async
-       ▼
-┌─────────────────────────────────┐
-│  LangGraph Multi-Agent System   │
-├─────────────────────────────────┤
-│ 1. Planner   → Sub-questions    │
-│ 2. Gatherer  → Web search       │
-│ 3. Analyzer  → Extract insights │
-│ 4. Reporter  → Generate report  │
-└─────────────────────────────────┘
-       │
-       ▼ Poll every 2s
-┌─────────────┐
-│  Show       │
-│  Progress   │
-└─────────────┘
-```
-
-## 🛠️ Tech Stack
-
-**Frontend:**
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- React Markdown
-
-**Backend:**
-- Python 3.11
-- FastAPI
-- LangGraph (multi-agent orchestration)
-- OpenRouter API (LLM)
-- Tavily API (web search)
-
-## 📊 Performance
-
-- **Speed**: 10-15 seconds average
-- **Cost**: ~$0.02-0.05 per research
-- **Accuracy**: Cites sources for all claims
-
-## 🎓 Why I Built This
-
-I needed to do market research for a project and spent 6 hours manually reading articles and taking notes. I thought: "AI should do this."
-
-So I built InsightFlow in 3 days using LangGraph to orchestrate multiple specialized agents. Each agent has one job: planning, searching, analyzing, or reporting.
-
-## 🚧 Roadmap
-
-- [ ] PDF upload support
-- [ ] Save research history
-- [ ] Custom agent workflows
-- [ ] Multi-language support
-- [ ] API for developers
-
-## 📝 License
-
-MIT
-
-## 👤 Author
-
-**Your Name**
-- LinkedIn: https://www.linkedin.com/in/zahir-jabar-7b7944281/
-- Portfolio: https://github.com/zakejabar
+Visit `http://localhost:3000` to start your research engine.
 
 ---
 
-⭐ Star this repo if it helped you!
+## 👨‍💻 Author
+
+**Zahir Jabar**
+- *Senior AI Engineer specialized in Agentic Systems*
+- [LinkedIn](https://www.linkedin.com/in/zahir-jabar-7b7944281/)
+- [Portfolio](https://github.com/zakejabar)
+
+> *"Reliability is not an accident. It is an architecture."*

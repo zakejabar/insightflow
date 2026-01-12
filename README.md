@@ -1,10 +1,10 @@
 # 🧠 InsightFlow V2: Advanced Agentic Research Engine
 
-> **"I don't build chatbots. I build digital employees."**
+> **"Digital assistants that help college students or professionals with their research."**
 
 InsightFlow is a **Production-Grade Cognitive Agent** designed for deep, autonomous research. Unlike linear RAG systems, it uses a **Cyclic State Machine (LangGraph)** to plan, research, critique its own findings, and self-correct—mimicking a senior human researcher.
 
-![UI Preview](https://via.placeholder.com/800x400?text=InsightFlow+Transparent+Cortex+UI)
+
 
 ## 🚀 The "Agentic" Difference
 
@@ -100,7 +100,7 @@ Visit `http://localhost:3000` to start your research engine.
 ## 👨‍💻 Author
 
 **Zahir Jabar**
-- *Senior AI Engineer specialized in Agentic Systems*
+- *AI Engineer specialized in Agentic Systems*
 - [LinkedIn](https://www.linkedin.com/in/zahir-jabar-7b7944281/)
 - [Portfolio](https://github.com/zakejabar)
 

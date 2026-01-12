@@ -25,6 +25,9 @@ research_jobs: Dict[str, dict] = {}
 
 class ResearchRequest(BaseModel):
     query: str
+    search_mode: str = "web"  # 'web' or 'academic'
+    min_citations: int = 0
+    open_access: bool = False
 
 class StatusResponse(BaseModel):
     job_id: str
@@ -32,7 +35,10 @@ class StatusResponse(BaseModel):
     progress: Optional[str] = None
     result: Optional[dict] = None
     error: Optional[str] = None
+    result: Optional[dict] = None
+    error: Optional[str] = None
     current_step: Optional[str] = None
+    logs: Optional[list[str]] = []
 
 @app.post("/api/research")
 async def create_research(request: ResearchRequest):
@@ -42,14 +48,22 @@ async def create_research(request: ResearchRequest):
     research_jobs[job_id] = {
         "status": "processing",
         "query": request.query,
+        "mode": request.search_mode,
         "progress": "Initializing agent...",
         "current_step": "Planning",
+        "logs": ["🚀 System initialized."],
         "result": None,
         "error": None
     }
     
     # Start agent in background
-    asyncio.create_task(run_research_agent(job_id, request.query))
+    asyncio.create_task(run_research_agent(
+        job_id, 
+        request.query, 
+        request.search_mode, 
+        request.min_citations, 
+        request.open_access
+    ))
     
     return {"job_id": job_id, "status": "processing"}
 
@@ -87,7 +101,7 @@ async def health():
         "openrouter_key_set": bool(os.getenv("OPENROUTER_API_KEY"))
     }
 
-async def run_research_agent(job_id: str, query: str):
+async def run_research_agent(job_id: str, query: str, search_mode: str = "web", min_citations: int = 0, open_access: bool = False):
     try:
         from agent import run_agent
         
@@ -106,6 +120,7 @@ async def run_research_agent(job_id: str, query: str):
             research_jobs[job_id]["current_step_index"] = 0  # ← ADD THIS
             research_jobs[job_id]["progress"] = "Breaking down your query..."
             result = original_plan(state)
+            if "logs" in result: research_jobs[job_id]["logs"] = result["logs"]
             research_jobs[job_id]["progress"] = f"Created {len(result['research_plan'])} research questions"
             return result
 
@@ -114,6 +129,7 @@ async def run_research_agent(job_id: str, query: str):
             research_jobs[job_id]["current_step_index"] = 1  # ← ADD THIS
             research_jobs[job_id]["progress"] = "Searching the web..."
             result = original_gather(state)
+            if "logs" in result: research_jobs[job_id]["logs"] = result["logs"]
             total = sum(len(r) for r in result['search_results'].values())
             research_jobs[job_id]["progress"] = f"Found {total} sources"
             return result
@@ -123,6 +139,7 @@ async def run_research_agent(job_id: str, query: str):
             research_jobs[job_id]["current_step_index"] = 2  # ← ADD THIS
             research_jobs[job_id]["progress"] = "Extracting key insights..."
             result = original_analyze(state)
+            if "logs" in result: research_jobs[job_id]["logs"] = result["logs"]
             research_jobs[job_id]["progress"] = f"Extracted {len(result['key_findings'])} findings"
             return result
 
@@ -131,6 +148,7 @@ async def run_research_agent(job_id: str, query: str):
             research_jobs[job_id]["current_step_index"] = 3  # ← ADD THIS
             research_jobs[job_id]["progress"] = "Generating report..."
             result = original_report(state)
+            if "logs" in result: research_jobs[job_id]["logs"] = result["logs"]
             research_jobs[job_id]["progress"] = "Report complete!"
             return result
         
@@ -142,7 +160,7 @@ async def run_research_agent(job_id: str, query: str):
         agent.generate_report = report_with_progress
         
         # Run agent
-        result = await run_agent(query)
+        result = await run_agent(query, search_mode, min_citations, open_access)
         
         # Restore original functions
         agent.plan_research = original_plan
@@ -153,6 +171,7 @@ async def run_research_agent(job_id: str, query: str):
         # Mark complete
         research_jobs[job_id]["status"] = "completed"
         research_jobs[job_id]["result"] = result
+        if "logs" in result: research_jobs[job_id]["logs"] = result["logs"]
         research_jobs[job_id]["progress"] = "Complete!"
         research_jobs[job_id]["current_step"] = "Complete"
         

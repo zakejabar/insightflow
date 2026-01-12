@@ -1,139 +1,127 @@
 'use client'
 
-interface Step {
-  name: string
-  icon: string
-  description: string
-}
+import { useEffect, useRef } from 'react'
 
 interface ProgressTrackerProps {
   currentStep: string
   progress?: string
+  logs?: string[]
 }
 
-const steps: Step[] = [
-  {
-    name: 'Planning',
-    icon: '🎯',
-    description: 'Breaking down your query into sub-questions'
-  },
-  {
-    name: 'Gathering',
-    icon: '🔍',
-    description: 'Searching sources and collecting information'
-  },
-  {
-    name: 'Analyzing',
-    icon: '🧠',
-    description: 'Extracting insights and identifying patterns'
-  },
-  {
-    name: 'Reporting',
-    icon: '✍️',
-    description: 'Generating structured report with citations'
-  }
+const steps = [
+  { id: 'planning', name: 'Planner', icon: '🎯' },
+  { id: 'gathering', name: 'Gatherer', icon: '🔍' },
+  { id: 'analyzing', name: 'Analyst', icon: '🧠' },
+  { id: 'reporting', name: 'Writer', icon: '✍️' }
 ]
 
-export default function ProgressTracker({ currentStep, progress }: ProgressTrackerProps) {
-  // Match EXACT step names from backend
-  const getCurrentStepIndex = () => {
-    // Normalize the step name
-    const step = (currentStep || '').toLowerCase().trim()
-    
-    // Match exact backend step names
-    if (step === 'planning') return 0
-    if (step === 'gathering') return 1
-    if (step === 'analyzing') return 2
-    if (step === 'reporting') return 3
-    if (step === 'complete') return 4
-    
-    // Fallback: try to match keywords (only if exact match fails)
-    if (step.includes('plan')) return 0
-    if (step.includes('gather') || step.includes('search')) return 1
-    if (step.includes('analyze')) return 2
-    if (step.includes('report') || step.includes('generat')) return 3
-    
-    return 0  // Default to first step
+export default function ProgressTracker({ currentStep, progress, logs = [] }: ProgressTrackerProps) {
+  const terminalRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll terminal
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight
+    }
+  }, [logs])
+
+  const getCurrentStepId = () => {
+    const s = (currentStep || '').toLowerCase()
+    if (s.includes('plan')) return 'planning'
+    if (s.includes('gather') || s.includes('search')) return 'gathering'
+    if (s.includes('analyze')) return 'analyzing'
+    if (s.includes('report') || s.includes('generat')) return 'reporting'
+    return 'complete'
   }
 
-  const currentIndex = getCurrentStepIndex()
+  const activeStepId = getCurrentStepId()
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 border border-gray-100">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">Research Progress</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto animate-in fade-in zoom-in-95 duration-500">
 
-      <div className="space-y-4">
-        {steps.map((step, index) => {
-          const isCompleted = index < currentIndex
-          const isCurrent = index === currentIndex
-          const isPending = index > currentIndex
+      {/* LEFT: Agent Mesh (Core) */}
+      <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100 flex flex-col justify-between h-[400px]">
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Active Agents
+          </h2>
 
-          return (
-            <div key={index} className="flex items-start gap-4">
-              {/* Icon */}
-              <div className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-2xl transition ${
-                isCompleted ? 'bg-green-100' :
-                isCurrent ? 'bg-blue-100 animate-pulse' :
-                'bg-gray-100 opacity-50'
-              }`}>
-                {isCompleted ? '✓' : step.icon}
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            {steps.map((step) => {
+              const isActive = activeStepId === step.id
+              const isPast = steps.findIndex(s => s.id === step.id) < steps.findIndex(s => s.id === activeStepId)
 
-              {/* Content */}
-              <div className="flex-1 pt-2">
-                <div className="flex items-center gap-2">
-                  <h3 className={`font-semibold ${
-                    isCompleted ? 'text-green-600' :
-                    isCurrent ? 'text-blue-600' :
-                    'text-gray-400'
-                  }`}>
-                    {step.name}
-                  </h3>
-                  {isCurrent && (
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              return (
+                <div
+                  key={step.id}
+                  className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${isActive
+                    ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
+                    : isPast
+                      ? 'border-green-200 bg-white opacity-50'
+                      : 'border-gray-100 bg-gray-50 opacity-40'
+                    }`}
+                >
+                  <div className="text-3xl mb-2">{step.icon}</div>
+                  <div className="font-semibold text-gray-800">{step.name}</div>
+                  {isActive && (
+                    <div className="absolute top-2 right-2">
+                      <span className="flex h-3 w-3">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                      </span>
+                    </div>
+                  )}
+                  {isActive && (
+                    <div className="mt-2 text-xs text-blue-600 font-mono">
+                      {progress || 'Processing...'}
                     </div>
                   )}
                 </div>
-                <p className={`text-sm mt-1 ${
-                  isCompleted ? 'text-gray-600' :
-                  isCurrent ? 'text-gray-700' :
-                  'text-gray-400'
-                }`}>
-                  {step.description}
-                </p>
+              )
+            })}
+          </div>
+        </div>
 
-                {/* Current progress detail */}
-                {isCurrent && progress && (
-                  <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-3 py-1 rounded-lg inline-block">
-                    {progress}
-                  </div>
-                )}
-
-                {isCompleted && (
-                  <div className="mt-2 text-xs text-green-600">
-                    ✓ Complete
-                  </div>
-                )}
-              </div>
-            </div>
-          )
-        })}
+        <div className="text-xs text-gray-400 text-center font-mono mt-4">
+          INSIGHTFLOW CORTEX v2.0
+        </div>
       </div>
 
-      {/* Overall Progress Bar */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
-          <span>Overall Progress</span>
-          <span>{Math.round((currentIndex / steps.length) * 100)}%</span>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-linear-to-br from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-500"
-            style={{ width: `${(currentIndex / steps.length) * 100}%` }}
-          />
+      {/* RIGHT: Neural Stream (Thought Logs) */}
+      <div className="bg-gray-900 rounded-2xl shadow-2xl p-6 border border-gray-800 h-[400px] flex flex-col">
+        <h2 className="text-sm font-mono text-gray-400 mb-4 flex justify-between items-center border-b border-gray-800 pb-2">
+          <span>&gt;_ NEURAL_STREAM</span>
+          <span className="flex gap-1">
+            <div className="w-2 h-2 rounded-full bg-red-500" />
+            <div className="w-2 h-2 rounded-full bg-yellow-500" />
+            <div className="w-2 h-2 rounded-full bg-green-500" />
+          </span>
+        </h2>
+
+        <div
+          ref={terminalRef}
+          className="flex-1 overflow-y-auto font-mono text-xs space-y-2 pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent"
+        >
+          {logs.length === 0 && (
+            <div className="text-gray-600 italic">Waiting for input...</div>
+          )}
+
+          {logs.map((log, i) => (
+            <div key={i} className="animate-in slide-in-from-left-2 duration-300">
+              <span className="text-gray-500 mr-2">[{new Date().toLocaleTimeString()}]</span>
+              <span className={`${log.includes('❌') ? 'text-red-400' :
+                log.includes('✅') ? 'text-green-400' :
+                  log.includes('🎓') ? 'text-purple-400' :
+                    log.includes('🤖') ? 'text-blue-400' :
+                      'text-gray-300'
+                }`}>
+                {log}
+              </span>
+            </div>
+          ))}
+
+          <div className="h-4 w-2 bg-gray-500 animate-pulse mt-2" />
         </div>
       </div>
     </div>

@@ -38,7 +38,7 @@ venv.bak/
 .env.prod
 .env.staging
 .env.development
-.env.example  # sometimes people commit this by mistake
+# .env.example (We want to commit this!)
 
 # === Streamlit ===
 .streamlit/

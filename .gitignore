@@ -1,0 +1,14 @@
+# Root .gitignore
+
+# Mac
+.DS_Store
+
+# Editor
+.vscode
+.idea
+
+# Logs
+*.log
+
+# Temp
+tmp/

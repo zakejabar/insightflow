@@ -82,9 +82,10 @@ export default function ResultsPage() {
         {/* Processing State */}
         {status && status.status === 'processing' && (
           <div className="max-w-2xl mx-auto">
-            <ProgressTracker 
-              currentStep={status.progress || 'Starting'} 
+            <ProgressTracker
+              currentStep={status.current_step || status.progress || 'Starting'}
               progress={status.progress}
+              logs={status.logs || []}
             />
           </div>
         )}
@@ -107,10 +108,11 @@ export default function ResultsPage() {
             <div className="bg-red-50 border border-red-200 rounded-xl p-6">
               <h3 className="font-bold text-red-800 mb-2">Research Failed</h3>
               <p className="text-red-600">{status.error || 'Unknown error occurred'}</p>
-              
+
+              <a
                 href="/"
                 className="inline-block mt-4 bg-red-600 text-white py-2 px-6 rounded-lg hover:bg-red-700 transition"
-              <a>
+              >
                 Try Again
               </a>
             </div>

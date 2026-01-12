@@ -10,6 +10,11 @@ export default function QueryInput() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Phase 3: Academic Filters
+  const [searchMode, setSearchMode] = useState<'web' | 'academic'>('web')
+  const [minCitations, setMinCitations] = useState(0)
+  const [openAccess, setOpenAccess] = useState(false)
+
   const exampleQueries = [
     "Analyze Indonesian e-wallet market: GoPay vs OVO vs Dana",
     "Top YC AI companies: business models and funding rounds",
@@ -27,7 +32,7 @@ export default function QueryInput() {
     setError('')
 
     try {
-      const result = await startResearch(query)
+      const result = await startResearch(query, searchMode, minCitations, openAccess)
       // Navigate to results page with job_id
       router.push(`/results/${result.job_id}`)
     } catch (err) {
@@ -51,7 +56,62 @@ export default function QueryInput() {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           What do you want to research?
         </label>
-        
+
+        {/* Mode Toggle */}
+        <div className="flex bg-gray-100 p-1 rounded-lg w-fit mb-4">
+          <button
+            onClick={() => setSearchMode('web')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${searchMode === 'web'
+                ? 'bg-white text-blue-600 shadow-xs'
+                : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            🌍 Web Search
+          </button>
+          <button
+            onClick={() => setSearchMode('academic')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${searchMode === 'academic'
+                ? 'bg-white text-purple-600 shadow-xs'
+                : 'text-gray-500 hover:text-gray-700'
+              }`}
+          >
+            🎓 Academic
+          </button>
+        </div>
+
+        {/* Academic Filters */}
+        {searchMode === 'academic' && (
+          <div className="mb-4 p-4 bg-purple-50 rounded-xl border border-purple-100 flex flex-wrap gap-4 items-center animate-in fade-in slide-in-from-top-2">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-purple-700 uppercase tracking-wide">Min Citations</label>
+              <select
+                value={minCitations}
+                onChange={(e) => setMinCitations(Number(e.target.value))}
+                className="bg-white border border-purple-200 text-gray-700 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block p-2"
+              >
+                <option value="0">Any Impact</option>
+                <option value="10">⭐ &gt; 10 Citations</option>
+                <option value="50">⭐⭐ &gt; 50 Citations</option>
+                <option value="100">⭐⭐⭐ &gt; 100 Citations</option>
+                <option value="500">⭐⭐⭐⭐⭐ &gt; 500 Citations</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-purple-700 uppercase tracking-wide">License</label>
+              <label className="inline-flex items-center bg-white border border-purple-200 rounded-lg p-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={openAccess}
+                  onChange={(e) => setOpenAccess(e.target.checked)}
+                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
+                />
+                <span className="ml-2 text-sm text-gray-700 font-medium">🔓 Open Access Only</span>
+              </label>
+            </div>
+          </div>
+        )}
+
         <textarea
           value={query}
           onChange={(e) => setQuery(e.target.value)}

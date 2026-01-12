@@ -21,15 +21,22 @@ export interface StatusResponse {
     insights: string[];
   };
   error?: string;
+  logs?: string[];
+  current_step?: string;
 }
 
-export async function startResearch(query: string): Promise<ResearchResponse> {
+export async function startResearch(
+  query: string,
+  search_mode: string = "web",
+  min_citations: number = 0,
+  open_access: boolean = false
+): Promise<ResearchResponse> {
   const response = await fetch(`${API_URL}/api/research`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, search_mode, min_citations, open_access }),
   });
 
   if (!response.ok) {

@@ -13,7 +13,6 @@ export default function QueryInput() {
   // Phase 3: Academic Filters
   const [searchMode, setSearchMode] = useState<'web' | 'academic'>('web')
   const [minCitations, setMinCitations] = useState(0)
-  const [openAccess, setOpenAccess] = useState(false)
 
   const exampleQueries = [
     "Analyze Indonesian e-wallet market: GoPay vs OVO vs Dana",
@@ -32,7 +31,7 @@ export default function QueryInput() {
     setError('')
 
     try {
-      const result = await startResearch(query, searchMode, minCitations, openAccess)
+      const result = await startResearch(query, searchMode, minCitations, true)
       // Navigate to results page with job_id
       router.push(`/results/${result.job_id}`)
     } catch (err) {
@@ -62,8 +61,8 @@ export default function QueryInput() {
           <button
             onClick={() => setSearchMode('web')}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${searchMode === 'web'
-                ? 'bg-white text-blue-600 shadow-xs'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white text-blue-600 shadow-xs'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             🌍 Web Search
@@ -71,8 +70,8 @@ export default function QueryInput() {
           <button
             onClick={() => setSearchMode('academic')}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition ${searchMode === 'academic'
-                ? 'bg-white text-purple-600 shadow-xs'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'bg-white text-purple-600 shadow-xs'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             🎓 Academic
@@ -97,17 +96,8 @@ export default function QueryInput() {
               </select>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold text-purple-700 uppercase tracking-wide">License</label>
-              <label className="inline-flex items-center bg-white border border-purple-200 rounded-lg p-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={openAccess}
-                  onChange={(e) => setOpenAccess(e.target.checked)}
-                  className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
-                />
-                <span className="ml-2 text-sm text-gray-700 font-medium">🔓 Open Access Only</span>
-              </label>
+            <div className="text-xs text-purple-600 bg-purple-100 px-3 py-2 rounded-lg">
+              🔓 <span className="font-semibold">Open Access Only</span> (always enabled)
             </div>
           </div>
         )}

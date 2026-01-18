@@ -87,11 +87,11 @@ async def get_result(job_id: str):
     
     return job["result"]
 
-@app.post("/api/upload")
-async def upload_file(file: UploadFile = File(...)):
-    """Handle PDF uploads"""
-    # TODO: Implement PDF parsing
-    return {"filename": file.filename, "status": "uploaded"}
+# @app.post("/api/upload")
+# async def upload_file(file: UploadFile = File(...)):
+#     """Handle PDF uploads"""
+#     # TODO: Implement PDF parsing
+#     return {"filename": file.filename, "status": "uploaded"}
 
 @app.get("/api/health")
 async def health():
